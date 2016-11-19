@@ -37,6 +37,7 @@ func _ready():
 	pass
 	
 func _exit_tree():
+	get_node("/root/BackgroundMusic").play_default_music();
 	accessible = AccessibleFactory.clear(accessible);
 	
 func _set_song_lyrics():
@@ -45,11 +46,14 @@ func _set_song_lyrics():
 			headerLabel.set_text(SongMetaData.title);
 		else:
 			headerLabel.set_text("Untitled Track");
-			
+		
 		var song = SongMetaData.generate_song();
 		
 		if(song != null):
 			bodyLabel.set_text(song.get_display_lyrics());		
+		
+		if(SongMetaData.musicFile != null):
+			 get_node("/root/BackgroundMusic").play_song_once(load(SongMetaData.musicFile));
 
 func popup():
 	popup.popup();
