@@ -8,13 +8,15 @@ const HappyPath = "/Happy/Happy.res";
 const SadPath = "/Sad/Sad.res";
 const WalkPath = "/Walk/Walk.res";
 
+const MIN_AUDIENCE_NUMBER = 1;
+const MAX_AUDIENCE_NUMBER = 14;
+
 static func _generateFrames(audienceNumber):
 	return AnimationCollection.new(load(str(AudiencePrePath, audienceNumber, HappyPath)),load(str(AudiencePrePath, audienceNumber, SadPath)),load(str(AudiencePrePath, audienceNumber, WalkPath)));
 
-var AudienceMember1Frames = _generateFrames("1");
-var AudienceMember2Frames = _generateFrames("2");
-var AudienceMember3Frames = _generateFrames("3");
-var AudienceMember4Frames = _generateFrames("4");
+static func _loadAudienceFrames():
+	var memberNumber = Util.randiRange(MIN_AUDIENCE_NUMBER, MAX_AUDIENCE_NUMBER + 1);	
+	return _generateFrames(str(memberNumber));	
 
 #The following are the states an audience member can be in. IDLE, ENTERING, and UNHAPPY, and LEAVING are transitional states
 #(the member will automatically switch into a different mode after an event happens).
@@ -49,16 +51,8 @@ var FrameCollection;
 
 func _init():
 	set_opacity(0);
-	var memberNumber = Util.randiMax(4);
 	
-	if(memberNumber == 0):
-		FrameCollection = AudienceMember1Frames;
-	elif(memberNumber == 1):
-		FrameCollection = AudienceMember2Frames;
-	elif(memberNumber == 2):
-		FrameCollection = AudienceMember3Frames;
-	elif(memberNumber == 3):
-		FrameCollection = AudienceMember4Frames;
+	FrameCollection = _loadAudienceFrames();
 
 func _ready():
 	GameController = get_node("/root/StenoHeroGame");
@@ -102,7 +96,7 @@ func _set_frame_percent(val):
 	
 	var Frames = Body.get_sprite_frames();
 	if(Frames == null):
-		return;
+		return;		
 		
 	var currentFrame = lerp(0, Frames.get_frame_count(), wrappedPercent);
 	currentFrame = min(int(floor(currentFrame)), Frames.get_frame_count() - 1);
