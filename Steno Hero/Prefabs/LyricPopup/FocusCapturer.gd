@@ -58,8 +58,10 @@ func _process_direction(event):
 	if(scrollContainer != null):
 		if(directionx != 0 && scrollContainer.is_v_scroll_enabled()):
 			scrollContainer.set_v_scroll(scrollContainer.get_v_scroll() + directionx);
+			accept_event();
 		if(directiony != 0 && scrollContainer.is_h_scroll_enabled()):
 			scrollContainer.set_h_scroll(scrollContainer.get_h_scroll() + directiony);
+			accept_event();
 	
 	
 func close_window():

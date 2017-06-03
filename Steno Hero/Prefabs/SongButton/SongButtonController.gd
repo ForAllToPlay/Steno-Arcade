@@ -64,7 +64,7 @@ func _on_songButton_pressed():
 		fader = null;
 		
 	StenoHeroGlobals.start_song(SongMetaData, fader);
-
+	
 func _on_input_event(ev):
 	if(!has_focus()):
 		return;
