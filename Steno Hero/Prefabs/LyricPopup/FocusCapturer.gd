@@ -26,7 +26,8 @@ func _input_event(event):
 	_process_direction(event);
 
 func _process_close(event):
-	if(!event.is_action("ui_more_info")):
+	return;
+	"""if(!event.is_action("ui_more_info")):
 		return;
 		
 	if(!event.is_pressed()):
@@ -36,7 +37,7 @@ func _process_close(event):
 		return;
 		
 	get_tree().set_input_as_handled();
-	close_window();
+	close_window();"""
 	
 func _process_direction(event):
 	var directionx = 0;
