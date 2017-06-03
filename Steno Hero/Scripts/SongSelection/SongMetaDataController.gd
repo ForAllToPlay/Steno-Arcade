@@ -3,10 +3,12 @@ extends VBoxContainer
 
 const METADATA_CHANGED = "METADATA_CHANGED";
 const METADATA_CLEARED = "METADATA_CLEARED";
+const LyricPopup = preload("res://Steno Hero/Prefabs/LyricPopup/LyricPopup.scn");
 
 var HoverButton;
 var FocusButton;
 
+var LyricTriggerButton;
 var LyricsViewMetaData;
 
 var metaData = null setget _set_meta_data;
@@ -21,13 +23,49 @@ func _ready():
 	for b in buttons:
 		b.connect(b.HOVERED, self, "_on_songButton_hover");
 		b.connect(b.FOCUSED, self, "_on_songButton_focus");
-		b.connect(b.VIEWING_LYRICS, self, "_on_songButton_viewingLyrics");
 		
 	FocusButton = null;
 	HoverButton = null;
 	
+	set_process_input(true);
 	pass
+	
+func _input(event):
+	_show_lyrics(event);
 
+func _show_lyrics(ev):		
+	
+	if(!ev.is_action("ui_more_info")):
+		return;
+		
+	if(!ev.is_pressed()):
+		return;
+		
+	if(ev.is_echo()):
+		return;
+		
+	if(self.metaData == null):
+		return;		
+	
+	get_tree().set_input_as_handled();		
+	if(HoverButton != null):
+		LyricTriggerButton = HoverButton;
+	else:
+		LyricTriggerButton = FocusButton;
+		
+	var screenRefs = get_tree().get_nodes_in_group("ScreenReferences");
+	if(screenRefs.size() > 0):		
+		var popup = LyricPopup.instance();	
+		popup.set_data(metaData);	
+		popup.connect(popup.CLOSING, self, "_on_popup_closing");
+		
+		screenRefs[0].add_child(popup);
+		popup.popup();		
+		
+func _on_popup_closing():
+	if(LyricTriggerButton != null):
+		LyricTriggerButton.grab_focus();
+		LyricTriggerButton = null;	
 
 func _on_songButton_hover(button, hovered):
 	#If a button was just hovered..
@@ -37,7 +75,7 @@ func _on_songButton_hover(button, hovered):
 		if(HoverButton != null):
 			self.metaData = HoverButton.SongMetaData;
 		else:
-			self.metaData = LyricsViewMetaData;
+			self.metaData = null;
 	#If a button lost hover, and it was the last hovered button..
 	elif(button == HoverButton):
 		#Clear the focus buttons
@@ -46,7 +84,7 @@ func _on_songButton_hover(button, hovered):
 		if(FocusButton != null):
 			self.metaData = FocusButton.SongMetaData;
 		else:
-			self.metaData = LyricsViewMetaData;
+			self.metaData = null;
 	
 func _on_songButton_focus(button, focused):	
 	#If a button was just focused..
@@ -56,7 +94,7 @@ func _on_songButton_focus(button, focused):
 		if(FocusButton != null):
 			self.metaData = FocusButton.SongMetaData;
 		else:
-			self.metaData = LyricsViewMetaData;
+			self.metaData = null;
 	#If a button lost focus, and it was the last focused button..
 	elif(button == FocusButton):
 		#Clear the focus buttons
@@ -65,16 +103,8 @@ func _on_songButton_focus(button, focused):
 		if(HoverButton != null):
 			self.metaData = HoverButton.SongMetaData;
 		else:
-			self.metaData = LyricsViewMetaData;
-	pass
-	
-func _on_songButton_viewingLyrics(button, viewing):
-	if(viewing):
-		LyricsViewMetaData = button.SongMetaData;
-	else:
-		LyricsViewMetaData = null;
-	
-	self.metaData = LyricsViewMetaData;
+			self.metaData = null;
+	pass	
 
 func _set_meta_data(val):
 	metaData = val;

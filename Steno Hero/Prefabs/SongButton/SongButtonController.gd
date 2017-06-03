@@ -11,8 +11,6 @@ var StenoHeroGlobals;
 const HOVERED = "songButton_hovered";
 const FOCUSED = "songButton_focus";
 
-const VIEWING_LYRICS = "songButton_viewinglyrics";
-
 var lastHovered;
 var lastFocused;
 
@@ -20,8 +18,7 @@ var accessible;
 
 func _init():
 	add_user_signal(HOVERED);
-	add_user_signal(FOCUSED);
-	add_user_signal(VIEWING_LYRICS);	
+	add_user_signal(FOCUSED);	
 
 func _ready():
 	accessible = AccessibleFactory.recreate(accessible, self);
@@ -63,34 +60,4 @@ func _on_songButton_pressed():
 	else:
 		fader = null;
 		
-	StenoHeroGlobals.start_song(SongMetaData, fader);
-	
-func _on_input_event(ev):
-	if(!has_focus()):
-		return;
-		
-	if(!ev.is_action("ui_more_info")):
-		return;
-		
-	if(!ev.is_pressed()):
-		return;
-		
-	if(ev.is_echo()):
-		return;
-		
-	
-	var screenRefs = get_tree().get_nodes_in_group("ScreenReferences");
-	if(screenRefs.size() > 0):	
-		var popup = LyricPopup.instance();	
-		popup.set_data(SongMetaData);	
-		popup.connect(popup.CLOSING, self, "_on_popup_closing");
-		
-		screenRefs[0].add_child(popup);
-		popup.popup();
-		get_tree().set_input_as_handled();
-		
-		emit_signal(VIEWING_LYRICS, self, true);
-		
-func _on_popup_closing():
-	emit_signal(VIEWING_LYRICS, self, false);
-	grab_focus();
+	StenoHeroGlobals.start_song(SongMetaData, fader);	
