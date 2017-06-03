@@ -47,6 +47,7 @@ func _init():
 	add_user_signal(LINE_FINISHED);
 
 func _ready():
+	get_node("/root/BackgroundMusic").stop();
 	
 	StenoHeroGlobals = get_node("/root/StenoHeroGlobals");
 	musicPlayer = get_node("MusicPlayer");
