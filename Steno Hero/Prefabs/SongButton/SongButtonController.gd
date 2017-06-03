@@ -54,6 +54,9 @@ func _set_song_data(val):
 	pass
 
 func _on_songButton_pressed():
+	if(!has_focus()):
+		return;	
+	
 	var fader = get_tree().get_nodes_in_group("SceneFaders");
 	if(fader.size() > 0):
 		fader = fader[0];
