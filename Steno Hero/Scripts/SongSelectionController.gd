@@ -37,7 +37,8 @@ func _ready():
 		
 		if(i == 0):
 			buttonInstance.grab_focus();
-		
+			
+	
 func _on_songButton_pressed(metaData):
 	StenoHeroGlobals.start_song(metaData, get_node('/root/StenoHeroSongSelect/SceneFadeOut'));
 	
