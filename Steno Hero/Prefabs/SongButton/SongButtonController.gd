@@ -25,7 +25,7 @@ func _ready():
 	StenoHeroGlobals = get_node('/root/StenoHeroGlobals');
 	
 	connect("pressed", self, "_on_songButton_pressed");
-	connect("input_event", self, "_on_input_event");
+	#connect("input_event", self, "_on_input_event");
 		
 	set_process(true);	
 	
