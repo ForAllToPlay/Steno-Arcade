@@ -126,7 +126,7 @@ func _clear_input():
 func _process(delta):
 	_enforce_focus();
 	_allow_pre_entry();
-	_grade_line(GameController.CurrentLine, InputBox.get_text(), null, WORD_REALTIME);
+	#_grade_line(GameController.CurrentLine, InputBox.get_text(), null, WORD_REALTIME);
 
 func _enforce_focus():
 	if(!has_focus() && !get_tree().is_paused() && !GameController.Finished):
@@ -154,17 +154,17 @@ func _grade_line(line, text, sig = null, firstSignal = null):
 	var EarliestUnmatchedWord = line.words[0];
 	
 	#For every word the player has made..
-	for inputWord in inputWords:
+	for inputWord in inputWords:		
 		#Look at all of the words in the line that haven't been matched yet
 		var matchedWord = null;
 		var currentLineWord = EarliestUnmatchedWord;
 		while(currentLineWord && !currentLineWord.is_line_break() && currentLineWord.owningLine == line):
 			if(currentLineWord.get_matchable_string() == Word.compute_matchable_string(inputWord)):
-				matchedWord = currentLineWord;
+				matchedWord = currentLineWord;				
 				break;
 			currentLineWord = currentLineWord.next;
 			
-		wordMatchCache.append(matchedWord);
+		wordMatchCache.append(matchedWord);		
 		
 		#If we've matched a word...
 		if(matchedWord):
@@ -173,7 +173,7 @@ func _grade_line(line, text, sig = null, firstSignal = null):
 				matchedWord.detectedTime = GameController.SongTimer;					
 				
 				if(firstSignal):
-					emit_signal(firstSignal, matchedWord);
+					emit_signal(firstSignal, matchedWord);				
 			
 			#And for the rest of this line, only look for words after this word (so the player can't enter words out of order)
 			EarliestUnmatchedWord = matchedWord.next;
@@ -182,6 +182,8 @@ func _grade_line(line, text, sig = null, firstSignal = null):
 				emit_signal(sig, matchedWord);
 				
 func _on_entrybox_text_changed(text):	
+	_grade_line(GameController.CurrentLine, text, null, WORD_REALTIME);
+	
 	var font = InputDisplay.get("custom_fonts/normal_font");
 	var textSize = font.get_string_size(text);
 	
@@ -195,7 +197,7 @@ func _on_entrybox_text_changed(text):
 	for piece in pieces:
 		if(index != 0):
 			bbcode += " ";
-		if(index < pieces.size() - 1 && index < wordMatchCache.size()):
+		if(index < pieces.size() && index < wordMatchCache.size()):
 			if(wordMatchCache[index] != null):
 				bbcode += "[color=#" + RightColor.to_html() + "]";
 			else:
@@ -211,7 +213,7 @@ func _on_entrybox_text_changed(text):
 		
 	InputDisplay.set_bbcode(bbcode);
 	
-func _show_word_feedback_message(word):
+func _show_word_feedback_message(word):		
 	
 	#Determine the praise
 	var promptText = "";
@@ -239,7 +241,7 @@ func _show_word_feedback_message(word):
 		if(index < wordMatchCache.size() && wordMatchCache[index] == word):			
 			break;
 			
-		index += 1;	
+		index += 1;		
 	
 	#Measure the entire line up until that word
 	var preStringSize = font.get_string_size(preString);
