@@ -63,17 +63,17 @@ func _process(delta):
 	# and "about_to_show" seem to cause the overlay to stay hidden
 	if(popup.is_hidden() != is_hidden()):
 		if(popup.is_hidden()):
-			_close_popup();
+			close_popup();
 		else:
 			show();
 
-func _close_popup():
+func close_popup():
 	emit_signal(CLOSING);
 	get_parent().remove_child(self);	
 
 func _unhandled_input(event):
 	if(event.is_action("ui_cancel") && event.is_pressed()):		
 		get_tree().set_input_as_handled();
-		_close_popup();
+		close_popup();
 
 
