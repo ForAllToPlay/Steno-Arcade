@@ -8,6 +8,7 @@ const LyricPopup = preload("res://Steno Hero/Prefabs/LyricPopup/LyricPopup.scn")
 var HoverButton;
 var FocusButton;
 
+var LyricPopupInstance;
 var LyricTriggerButton;
 var LyricsViewMetaData;
 
@@ -42,30 +43,38 @@ func _show_lyrics(ev):
 		return;
 		
 	if(ev.is_echo()):
-		return;
-		
-	if(self.metaData == null):
-		return;		
+		return;	
 	
-	get_tree().set_input_as_handled();		
-	if(HoverButton != null):
-		LyricTriggerButton = HoverButton;
+	if(LyricPopupInstance  == null):		
+		if(self.metaData == null):
+			return;		
+		
+		if(HoverButton != null):
+			LyricTriggerButton = HoverButton;
+		else:
+			LyricTriggerButton = FocusButton;
+			
+		var screenRefs = get_tree().get_nodes_in_group("ScreenReferences");
+		if(screenRefs.size() > 0):		
+			var popup = LyricPopup.instance();	
+			popup.set_data(metaData);	
+			popup.connect(popup.CLOSING, self, "_on_popup_closing");
+			
+			screenRefs[0].add_child(popup);
+			popup.popup();		
+			
+			LyricPopupInstance = popup;
+			get_tree().set_input_as_handled();		
 	else:
-		LyricTriggerButton = FocusButton;
-		
-	var screenRefs = get_tree().get_nodes_in_group("ScreenReferences");
-	if(screenRefs.size() > 0):		
-		var popup = LyricPopup.instance();	
-		popup.set_data(metaData);	
-		popup.connect(popup.CLOSING, self, "_on_popup_closing");
-		
-		screenRefs[0].add_child(popup);
-		popup.popup();		
+		LyricPopupInstance.close_popup();
+		LyricPopupInstance = null;
+		get_tree().set_input_as_handled();		
 		
 func _on_popup_closing():
 	if(LyricTriggerButton != null):
 		LyricTriggerButton.grab_focus();
 		LyricTriggerButton = null;	
+	LyricPopupInstance = null;
 
 func _on_songButton_hover(button, hovered):
 	#If a button was just hovered..
