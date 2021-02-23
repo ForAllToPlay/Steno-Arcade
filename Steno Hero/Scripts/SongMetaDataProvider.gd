@@ -149,11 +149,11 @@ class MetaDataComparer:
 				return false;
 		
 		if(a.artist != null && b.artist != null && a.artist != b.artist):
-			return a.artist.nocasecmp_to(b.artist);
+			return a.artist.casecmp_to(b.artist);
 		
 		if(!b.title):
 			return true;
 		if(!a.title):
 			return false;
 			
-		return a.title.nocasecmp_to(b.title) < 0;
+		return a.title.casecmp_to(b.title) < 0;
